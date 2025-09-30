@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>-450.kml</name>
+	<Style id="icon-A.png-0088FF0">
+		<IconStyle>
+			<scale>1.2</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/camera.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+	</Style>
+	<Style id="icon-A.png-0088FF10">
+		<IconStyle>
+			<scale>1.4</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/camera.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+	</Style>
+	<StyleMap id="icon-A.png-0088FF2">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#icon-A.png-0088FF0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#icon-A.png-0088FF10</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>?-450</name>
+		<TimeStamp><when>2025-09-19T16:56:00Z</when>
+</TimeStamp>
+		<styleUrl>#icon-A.png-0088FF2</styleUrl>
+		<ExtendedData>
+			<Data name="rating">
+				<value>0</value>
+			</Data>
+			<Data name="pictures">
+				<value><![CDATA[<br/>
+<img src="image_186.jpg"/>]]></value>
+			</Data>
+		</ExtendedData>
+		<Point>
+			<coordinates>98.63510404000002,3.61175421,0</coordinates>
+		</Point>
+		<atom:link rel="app" href="https://www.google.com/earth/about/versions/#earth-pro" title="Google Earth Pro 7.3.6.10201"></atom:link>
+	</Placemark>
+</Document>
+</kml>

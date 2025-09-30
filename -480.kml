@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>-480.kml</name>
+	<Style id="mm_marker_color_9880540">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/camera.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ffd4bc00</color>
+			<width>4</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>ffd4bc00</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="mm_marker_color_98811200">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#mm_marker_color_98840</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#mm_marker_color_9880540</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="mm_marker_color_98840">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/camera.png</href>
+			</Icon>
+			<hotSpot x="0.5" y="0" xunits="fraction" yunits="fraction"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ffd4bc00</color>
+			<width>4</width>
+		</LineStyle>
+		<PolyStyle>
+			<color>ffd4bc00</color>
+		</PolyStyle>
+	</Style>
+	<Placemark id="988">
+		<name>?-480</name>
+		<description><![CDATA[<img style="max-width:500px;" src="img_2025_09_19-21_12_43.jpg"/>]]></description>
+		<TimeStamp><when>2025-09-19T14:11:58Z</when>
+</TimeStamp>
+		<styleUrl>#mm_marker_color_98811200</styleUrl>
+		<ExtendedData>
+			<Data name="com_exlyo_mapmarker_images_with_ext">
+				<value>[{&quot;file_rel_path&quot;:&quot;local_media/img_2025_09_19-21_12_43.jpg&quot;,&quot;file_size&quot;:113300,&quot;file_extension&quot;:&quot;.jpg&quot;}]</value>
+			</Data>
+			<Data name="com_exlyo_mapmarker_piniconcode">
+				<value>-1</value>
+			</Data>
+			<Data name="com_exlyo_mapmarker_customfields">
+				<value>[]</value>
+			</Data>
+		</ExtendedData>
+		<Point>
+			<coordinates>98.63022222681985,3.614023823786869,0</coordinates>
+		</Point>
+		<atom:link rel="app" href="https://www.google.com/earth/about/versions/#earth-pro" title="Google Earth Pro 7.3.6.10201"></atom:link>
+	</Placemark>
+</Document>
+</kml>
