@@ -4,331 +4,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter KML/KMZ Otomatis</title>
+    <title>Konverter KML - Project ANA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #333;
+            font-family: 'Inter', sans-serif;
         }
 
-        #app-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            border: 1px solid #e0e0e0;
-        }
+        /* Custom Keyframe Animations */
+        @keyframes bob {
 
-        h1 {
-            color: #1c1e21;
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #606770;
-            margin-bottom: 30px;
-        }
-
-        #drop-area {
-            border: 2px dashed #007bff;
-            border-radius: 8px;
-            padding: 50px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        #drop-area.highlight {
-            background-color: #e9f5ff;
-            border-color: #0056b3;
-        }
-
-        #file-label {
-            font-weight: bold;
-            color: #007bff;
-            font-size: 1.1em;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        #status {
-            margin-top: 25px;
-            font-style: italic;
-            color: #28a745;
-            min-height: 24px;
-            font-weight: 500;
-        }
-
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border-left-color: #007bff;
-            animation: spin 1s ease infinite;
-            display: none;
-            /* Sembunyi secara default */
-            margin: 25px auto 0;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
+            0%,
             100% {
-                transform: rotate(360deg);
+                transform: translateY(0);
             }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: none;
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        /* Classes to apply animations */
+        .animate-bob {
+            animation: bob 3s ease-in-out infinite;
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 1s steps(40, end), fadeIn .5s;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Checkmark Animation */
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        .checkmark {
+            animation: scale 0.3s ease-in-out 0.9s both;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 
-<body>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
-    <div id="app-container">
-        <h1>Konverter KML/KMZ 🗺️</h1>
-        <p>Unggah file .kml atau .kmz Anda. Alat ini akan memindahkan data gambar dari <strong>ExtendedData</strong> ke
-            tag <strong>description</strong> dan mengunduh hasilnya sebagai file .kmz secara otomatis.</p>
+    <div id="app"
+        class="relative w-full max-w-lg bg-white shadow-2xl shadow-slate-300/30 rounded-2xl p-8 transition-all duration-500">
 
-        <div id="drop-area">
-            <input type="file" id="file-input" accept=".kml,.kmz">
-            <label for="file-input" id="file-label">Seret & lepas file di sini, atau klik untuk memilih</label>
+        <div id="ana-container" class="absolute -top-16 left-1/2 -translate-x-1/2 transition-all duration-500">
+            <svg id="ana-svg" width="120" height="120" viewBox="0 0 150 150" class="drop-shadow-lg animate-bob">
+                <defs>
+                    <clipPath id="clip-hair">
+                        <circle cx="75" cy="60" r="40" />
+                    </clipPath>
+                </defs>
+                <path d="M 50 150 Q 75 120 100 150 L 90 150 Q 75 135 60 150 Z" fill="#4A5568" />
+                <circle cx="75" cy="115" r="30" fill="#2D3748" />
+                <circle cx="75" cy="60" r="40" fill="#fbe5d7" />
+                <g clip-path="url(#clip-hair)">
+                    <path d="M 35 60 A 40 40 0 0 1 115 60 A 45 45 0 0 1 35 60 Z" fill="#2D3748" />
+                    <path d="M 60 20 L 75 45 L 90 20 Z" fill="#1A202C" />
+                </g>
+                <circle id="eye-left" cx="63" cy="65" r="4" fill="#1A202C" />
+                <circle id="eye-right" cx="87" cy="65" r="4" fill="#1A202C" />
+                <path id="mouth" d="M 70 80 Q 75 85 80 80" stroke="#1A202C" stroke-width="3" fill="none"
+                    stroke-linecap="round" />
+            </svg>
         </div>
 
-        <div class="spinner" id="spinner"></div>
-        <div id="status">Menunggu file...</div>
+        <div class="mt-16 text-center">
+
+            <div id="initial-view">
+                <h1 class="text-3xl font-bold text-slate-800">Konverter KML Generasi Baru</h1>
+                <p class="text-slate-500 mt-2">Serahkan file KML/KMZ Anda pada <strong>ANA Purba</strong> untuk
+                    dioptimalkan.</p>
+                <div id="drop-area"
+                    class="mt-8 border-2 border-dashed border-slate-300 rounded-xl p-8 cursor-pointer transition-all duration-300 hover:border-blue-500 hover:bg-blue-50">
+                    <input type="file" id="file-input" class="hidden" accept=".kml,.kmz">
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <svg class="w-12 h-12 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 16.5V9.75m0 0l-3.75 3.75M12 9.75l3.75 3.75M3 17.25V6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75v10.5A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 17.25z" />
+                        </svg>
+                        <p class="font-semibold text-blue-600">Pilih file atau seret ke sini</p>
+                        <span class="text-xs text-slate-400">Hanya mendukung .kml dan .kmz</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="processing-view" class="hidden">
+                <div id="status-icon" class="w-24 h-24 mx-auto"></div>
+                <h2 id="status-title" class="text-2xl font-bold text-slate-800 mt-6"></h2>
+                <p id="status-message" class="text-slate-500 mt-2 min-h-[24px]"></p>
+                <div id="progress-container" class="w-full bg-slate-200 rounded-full h-2.5 mt-6 overflow-hidden">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                        style="width: 0%"></div>
+                </div>
+                <div id="action-buttons" class="mt-8 space-x-4"></div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // --- Referensi Elemen DOM ---
+        const app = document.getElementById('app');
+        const anaSvg = document.getElementById('ana-svg');
+        const initialView = document.getElementById('initial-view');
         const dropArea = document.getElementById('drop-area');
         const fileInput = document.getElementById('file-input');
-        const statusDiv = document.getElementById('status');
-        const spinner = document.getElementById('spinner');
+        const processingView = document.getElementById('processing-view');
+        const statusIcon = document.getElementById('status-icon');
+        const statusTitle = document.getElementById('status-title');
+        const statusMessage = document.getElementById('status-message');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const actionButtons = document.getElementById('action-buttons');
 
-        // Mencegah perilaku default browser untuk drag & drop
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
+        // --- Ikon SVG sebagai string untuk kemudahan ---
+        const ICONS = {
+            success: `
+            <svg class="w-full h-full checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke="#22c55e" stroke-width="4"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" stroke="#22c55e" stroke-width="5" stroke-linecap="round"/>
+            </svg>`,
+            error: `
+            <svg class="w-full h-full" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25" fill="none" stroke="#ef4444" stroke-width="4"/>
+                <path d="M16 16 36 36 M36 16 16 36" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+            </svg>`,
+        };
 
-        function preventDefaults(e) {
+        // --- Manajemen UI State ---
+        const UI = {
+            state: 'idle',
+
+            setState(newState, data = {}) {
+                this.state = newState;
+                document.body.className = `bg-slate-100 flex items-center justify-center min-h-screen p-4 state-${newState}`;
+
+                // Reset classes
+                anaSvg.classList.remove('animate-bob');
+
+                switch (newState) {
+                    case 'idle':
+                        initialView.classList.remove('hidden');
+                        processingView.classList.add('hidden');
+                        anaSvg.classList.add('animate-bob');
+                        app.classList.remove('ring-2', 'ring-green-500', 'ring-red-500');
+                        break;
+
+                    case 'processing':
+                        initialView.classList.add('hidden');
+                        processingView.classList.remove('hidden');
+                        progressContainer.classList.remove('hidden');
+                        actionButtons.innerHTML = '';
+                        statusIcon.innerHTML = '';
+                        this.updateProgress(data.progress, data.message);
+                        break;
+
+                    case 'success':
+                        progressContainer.classList.add('hidden');
+                        statusIcon.innerHTML = ICONS.success;
+                        statusTitle.textContent = 'Konversi Berhasil!';
+                        statusMessage.textContent = `${data.count} placemark telah dioptimalkan.`;
+                        app.classList.add('ring-2', 'ring-green-500');
+                        this.createButtons(data.downloadUrl, data.fileName);
+                        break;
+
+                    case 'error':
+                        progressContainer.classList.add('hidden');
+                        statusIcon.innerHTML = ICONS.error;
+                        statusTitle.textContent = 'Terjadi Kesalahan';
+                        statusMessage.textContent = data.message;
+                        app.classList.add('ring-2', 'ring-red-500');
+                        this.createButtons();
+                        break;
+                }
+            },
+
+            updateProgress(progress, message) {
+                progressBar.style.width = `${progress}%`;
+                statusTitle.textContent = message;
+                statusTitle.classList.add('typing-effect');
+                // Hapus kelas animasi setelah selesai agar bisa di-trigger lagi
+                setTimeout(() => statusTitle.classList.remove('typing-effect'), 1000);
+            },
+
+            createButtons(downloadUrl, fileName) {
+                actionButtons.innerHTML = ''; // Clear previous buttons
+                if (downloadUrl) {
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.download = fileName;
+                    downloadBtn.className = 'fade-in inline-block bg-green-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105';
+                    downloadBtn.textContent = 'Unduh File';
+                    actionButtons.appendChild(downloadBtn);
+                }
+
+                const resetBtn = document.createElement('button');
+                resetBtn.className = 'fade-in inline-block bg-slate-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-600 transition-transform transform hover:scale-105';
+                resetBtn.textContent = 'Konversi Lagi';
+                resetBtn.onclick = () => this.setState('idle');
+                actionButtons.appendChild(resetBtn);
+            }
+        };
+
+        // --- Event Listeners ---
+        ['dragenter', 'dragover'].forEach(e => dropArea.addEventListener(e, () => dropArea.classList.add('bg-blue-50', 'border-blue-500')));
+        ['dragleave', 'drop'].forEach(e => dropArea.addEventListener(e, () => dropArea.classList.remove('bg-blue-50', 'border-blue-500')));
+
+        document.body.addEventListener('dragover', e => e.preventDefault());
+        document.body.addEventListener('drop', e => e.preventDefault());
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        dropArea.addEventListener('drop', e => {
             e.preventDefault();
-            e.stopPropagation();
-        }
-
-        // Menambahkan highlight saat file diseret di atas area
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+            fileInput.files = e.dataTransfer.files;
+            handleFile(fileInput.files[0]);
         });
+        fileInput.addEventListener('change', e => e.target.files.length && handleFile(e.target.files[0]));
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
-        });
+        const delay = ms => new Promise(res => setTimeout(res, ms));
 
-        // Menangani file yang dijatuhkan (drop)
-        dropArea.addEventListener('drop', handleDrop, false);
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        }
-
-        // Menangani file yang dipilih dari input
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
-
-        /**
-         * Fungsi utama untuk memproses file
-         * @param {File} file - File yang akan diproses
-         */
+        // --- Logika Inti Aplikasi ---
         async function handleFile(file) {
-            if (!file.name.endsWith('.kml') && !file.name.endsWith('.kmz')) {
-                statusDiv.textContent = '❌ Error: Harap pilih file .kml atau .kmz';
-                statusDiv.style.color = 'red';
+            if (!file || (!file.name.endsWith('.kml') && !file.name.endsWith('.kmz'))) {
+                alert('File tidak valid. Harap pilih file .kml atau .kmz');
                 return;
             }
 
-            statusDiv.textContent = 'Membaca file...';
-            statusDiv.style.color = '#333';
-            spinner.style.display = 'block';
-
-            const originalFileName = file.name.split('.').slice(0, -1).join('.');
-            const newFileName = `${originalFileName}_converted.kmz`;
+            const newFileName = `${file.name.split('.').slice(0, -1).join('.')}_ANA.kmz`;
 
             try {
-                if (file.name.endsWith('.kml')) {
-                    await processKmlFile(file, newFileName);
-                } else { // .kmz
-                    await processKmzFile(file, newFileName);
-                }
+                UI.setState('processing', { progress: 0, message: 'Memulai Proses...' });
+
+                await delay(500);
+                UI.updateProgress(20, 'Menganalisis file Anda...');
+
+                const processFunction = file.name.endsWith('.kml') ? processKmlFile : processKmzFile;
+                const { content, count } = await processFunction(file);
+
+                await delay(500);
+                UI.updateProgress(100, 'Menyelesaikan...');
+
+                await delay(1000);
+                const downloadUrl = URL.createObjectURL(content);
+                UI.setState('success', { count, downloadUrl, fileName: newFileName });
+
             } catch (error) {
-                console.error('Terjadi kesalahan:', error);
-                statusDiv.textContent = `❌ Error: ${error.message}`;
-                statusDiv.style.color = 'red';
-                spinner.style.display = 'none';
+                console.error('Processing Error:', error);
+                UI.setState('error', { message: error.message });
             }
         }
 
-        /**
-         * Memproses file KML tunggal
-         * @param {File} file - File KML
-         * @param {string} newFileName - Nama file output
-         */
-        async function processKmlFile(file, newFileName) {
-            statusDiv.textContent = 'Memproses file KML...';
+        async function processKmlFile(file) {
+            await delay(500);
+            UI.updateProgress(50, 'Memodifikasi data KML...');
             const kmlText = await file.text();
-            const modifiedKmlText = processKmlContent(kmlText);
+            const { modifiedKmlText, count } = processKmlContent(kmlText);
 
-            statusDiv.textContent = 'Membuat file KMZ...';
+            await delay(500);
+            UI.updateProgress(80, 'Membangun arsip KMZ...');
             const zip = new JSZip();
             zip.file("doc.kml", modifiedKmlText);
-
             const content = await zip.generateAsync({ type: "blob" });
-            downloadFile(content, newFileName);
+            return { content, count };
         }
 
-        /**
-         * Memproses file KMZ (arsip zip)
-         * @param {File} file - File KMZ
-         * @param {string} newFileName - Nama file output
-         */
-        async function processKmzFile(file, newFileName) {
-            statusDiv.textContent = 'Membuka arsip KMZ...';
+        async function processKmzFile(file) {
+            await delay(500);
+            UI.updateProgress(40, 'Membongkar arsip KMZ...');
             const zip = await JSZip.loadAsync(file);
+            const kmlEntry = Object.entries(zip.files).find(([name]) => name.toLowerCase().endsWith('.kml'));
+            if (!kmlEntry) throw new Error('File KML tidak ditemukan di dalam arsip.');
 
-            // Cari file KML utama di dalam arsip
-            let kmlFile = null;
-            let kmlFileName = '';
-            for (const fileName in zip.files) {
-                if (fileName.toLowerCase().endsWith('.kml')) {
-                    kmlFile = zip.files[fileName];
-                    kmlFileName = fileName;
-                    break;
-                }
-            }
-
-            if (!kmlFile) {
-                throw new Error('Tidak ada file .kml yang ditemukan di dalam arsip KMZ.');
-            }
-
-            statusDiv.textContent = `Memproses ${kmlFileName}...`;
+            await delay(500);
+            UI.updateProgress(60, 'Memodifikasi data KML...');
+            const [kmlFileName, kmlFile] = kmlEntry;
             const kmlText = await kmlFile.async('string');
-            const modifiedKmlText = processKmlContent(kmlText);
+            const { modifiedKmlText, count } = processKmlContent(kmlText);
 
-            // Buat arsip KMZ baru
-            statusDiv.textContent = 'Menyusun ulang file KMZ...';
+            await delay(500);
+            UI.updateProgress(80, 'Menyusun ulang arsip...');
             const newZip = new JSZip();
-            // Tambahkan KML yang sudah dimodifikasi
             newZip.file(kmlFileName, modifiedKmlText);
-
-            // Salin semua file lain (gambar, dll) dari KMZ lama ke yang baru
-            for (const fileName in zip.files) {
+            for (const [fileName, fileData] of Object.entries(zip.files)) {
                 if (fileName !== kmlFileName) {
-                    newZip.file(fileName, await zip.files[fileName].async('blob'));
+                    newZip.file(fileName, await fileData.async('blob'));
                 }
             }
-
             const content = await newZip.generateAsync({ type: "blob" });
-            downloadFile(content, newFileName);
+            return { content, count };
         }
 
-        /**
-         * Logika inti untuk memodifikasi konten string KML (XML)
-         * @param {string} kmlText - Konten KML sebagai teks
-         * @returns {string} - Konten KML yang sudah dimodifikasi
-         */
         function processKmlContent(kmlText) {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(kmlText, "application/xml");
-
             const placemarks = xmlDoc.getElementsByTagName('Placemark');
             let modificationsCount = 0;
 
             for (const placemark of placemarks) {
-                const extendedData = placemark.querySelector('ExtendedData');
-                if (!extendedData) continue;
-
-                const pictureData = extendedData.querySelector('Data[name="pictures"]');
+                const pictureData = placemark.querySelector('ExtendedData > Data[name="pictures"]');
                 if (!pictureData) continue;
 
                 const valueNode = pictureData.querySelector('value');
-                if (valueNode && valueNode.textContent) {
-                    const cdataContent = valueNode.textContent;
-                    // Ekstrak hanya tag <img> dari CDATA
-                    const imgMatch = cdataContent.match(/<img[^>]+>/);
-
+                if (valueNode?.textContent) {
+                    const imgMatch = valueNode.textContent.match(/<img[^>]+>/);
                     if (imgMatch) {
-                        let imgTag = imgMatch[0];
-                        // Tambahkan atribut style="max-width:500px;"
-                        if (!imgTag.includes('style=')) {
-                            imgTag = imgTag.replace('<img', '<img style="max-width:500px;"');
-                        } else {
-                            // Jika sudah ada style, tambahkan di dalamnya (lebih aman)
-                            imgTag = imgTag.replace(/style="([^"]*)"/, 'style="max-width:500px; $1"');
+                        let imgTag = imgMatch[0].includes('style=')
+                            ? imgMatch[0].replace(/style="([^"]*)"/, 'style="max-width:500px; $1"')
+                            : imgMatch[0].replace('<img', '<img style="max-width:500px;"');
+
+                        let descNode = placemark.querySelector('description') || xmlDoc.createElement('description');
+                        descNode.textContent = '';
+                        descNode.appendChild(xmlDoc.createCDATASection(imgTag));
+                        if (!placemark.querySelector('description')) {
+                            placemark.insertBefore(descNode, placemark.firstChild);
                         }
 
-                        // Buat atau perbarui tag <description>
-                        let descriptionNode = placemark.querySelector('description');
-                        if (!descriptionNode) {
-                            descriptionNode = xmlDoc.createElement('description');
-                            // Letakkan di awal elemen Placemark
-                            placemark.insertBefore(descriptionNode, placemark.firstChild);
-                        }
-
-                        // Isi dengan CDATA yang berisi tag gambar
-                        descriptionNode.textContent = ''; // Hapus konten lama
-                        descriptionNode.appendChild(xmlDoc.createCDATASection(imgTag));
-
-                        // Hapus data gambar dari ExtendedData
                         pictureData.parentNode.removeChild(pictureData);
                         modificationsCount++;
                     }
                 }
             }
 
-            statusDiv.textContent = `✅ ${modificationsCount} placemark berhasil dimodifikasi.`;
             const serializer = new XMLSerializer();
-            return serializer.serializeToString(xmlDoc);
+            return { modifiedKmlText: serializer.serializeToString(xmlDoc), count: modificationsCount };
         }
 
-        /**
-         * Memicu unduhan file di browser
-         * @param {Blob} content - Konten file
-         * @param {string} fileName - Nama file untuk diunduh
-         */
-        function downloadFile(content, fileName) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(link.href); // Membersihkan memori
-
-            spinner.style.display = 'none';
-            statusDiv.textContent += ' File siap diunduh!';
-            setTimeout(() => {
-                statusDiv.textContent = 'Menunggu file...';
-                statusDiv.style.color = '#333';
-            }, 5000);
-        }
-
+        // --- Inisialisasi ---
+        UI.setState('idle');
     </script>
 
 </body>
